@@ -7,10 +7,10 @@ namespace StatLib
     /// <summary>
     /// Библиотека, содержащая некоторые функции комбинаторики
     /// </summary>
-    static class Combinatoricks
+    public static class Combinatorics
     {
         /// <summary>
-        /// Вычисляет факториал числа.
+        /// Вычисляет факториал числа. (Не использовать при x > 12)
         /// </summary>
         /// <param name="x">Число</param>
         /// <returns>Факториал числа.</returns>
@@ -27,14 +27,35 @@ namespace StatLib
         }
 
         /// <summary>
-        /// Вычисляет количество сочетаний без повторений из n элементов по k.
+        /// Вычисляет количество сочетаний без повторений из n элементов по k. (Не использовать при n > 24, вылетит ошибка)
         /// </summary>
         /// <param name="k">Мощность сочетания.</param>
         /// <param name="n">Мощность множества.</param>
         /// <returns>Количество сочетаний без повторений.</returns>
         public static int C(int k, int n)
         {
-            return Factorial(n) / (Factorial(k) * Factorial(n - k));
+            int result = 1;
+            
+            if (k > n - k)
+            {
+                for (int i = n; i > k; i--)
+                {
+                    result *= i;
+                }
+
+                result /= Factorial(n - k);
+            }
+            else
+            {
+                for (int i = n; i > n - k; i--)
+                {
+                    result *= i;
+                }
+
+                result /= Factorial(k);
+            }
+
+            return result;
         }
     }
 }

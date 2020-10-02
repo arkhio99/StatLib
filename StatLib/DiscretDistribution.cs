@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text;
-using comb = StatLib.Combinatoricks;
+using comb = StatLib.Combinatorics;
 
 namespace StatLib.DiscretDistribution
 {

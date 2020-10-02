@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StatLib;
 
-namespace StatLibTest
+namespace StatLibTests
 {
     [TestClass]
     public class IntegralTests
@@ -9,7 +9,7 @@ namespace StatLibTest
         [TestMethod]
         public void CalculateIntegralByDifferentTrapeze_Test()
         {
-            double result = StatLib.IntegralCalculation.CalculateIntegralByTrapeze(
+            double result = IntegralCalculation.CalculateIntegralByTrapeze(
                 (x) => x * x, 2, -2, 0.01);
 
             Assert.AreEqual(16.0 / 3, result, 0.01);

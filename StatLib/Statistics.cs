@@ -10,7 +10,7 @@ namespace StatLib
     /// <summary>
     /// Класс содержит вспомогательные функции для статистики.
     /// </summary>
-    static class Statistics
+    public static class Statistics
     {
         /// <summary>
         /// Вычисляет среднее арифметическое(мат.ожидание).
@@ -31,7 +31,7 @@ namespace StatLib
         public static double GetDispersion(double[] data, double average)
         { 
             return Math.Sqrt(
-                data.Sum((x) => (x - average) * (x - average)) / data.Length
+                data.Sum((x) => (x - average) * (x - average)) / (data.Length - 1)
                 );
         }
 
@@ -42,7 +42,7 @@ namespace StatLib
         /// <param name="N">Количество испытаний(не путать с опытами).</param>
         /// <param name="probability">Вероятность появления события.</param>
         /// <returns>Критерий Пирсона.</returns>
-        public static double GetPearsonsNumberForDiscretDistribution(int[] frequencies, int N, int probability)
+        public static double GetPearsonsNumberForDiscretDistribution(int[] frequencies, int N, double probability)
         {
             int[] temp = new int[frequencies.Length];
             for (int i = 0; i < temp.Length; i++)
@@ -54,6 +54,27 @@ namespace StatLib
             double[] probabilitiesByCountOfProvings = (from val in temp select binom.GetValue(val)).ToArray();
             int n = frequencies.Sum();
             double[] theorFrequencies = (from val in probabilitiesByCountOfProvings select n * val).ToArray();
+
+            List<int> newFreqs = new List<int>();
+            List<double> newTheorFreqs = new List<double>();
+            int tempFreq = 0;
+            double tempTheorFreq = 0;
+            for(int i = 0; i < frequencies.Length; i++)
+            {
+                tempFreq += frequencies[i];
+                tempTheorFreq += theorFrequencies[i];
+
+                if (tempFreq > 5)
+                {
+                    newFreqs.Add(tempFreq);
+                    newTheorFreqs.Add(tempTheorFreq);
+                    tempFreq = 0;
+                    tempTheorFreq = 0;
+                }
+            }
+
+            frequencies = newFreqs.ToArray();
+            theorFrequencies = newTheorFreqs.ToArray();
 
             return (frequencies.Zip<int, double, (double, double)>(theorFrequencies, (x, y) => ((double)x, y)))
                 .Sum((x) => (x.Item1 - x.Item2) * (x.Item1 - x.Item2) / x.Item2);
