@@ -41,9 +41,9 @@ namespace StatLib.ContinuousDistribution
         public double GetValue(double x, ConditionOfProbability cond)
         {
             double z = (x - average) / standDif;
-            Func<double, double> funcBelowIntegral = (x) => Math.Exp(-1 * z * z / 2);
+            Func<double, double> funcBelowIntegral = (arg) => Math.Exp(-1 * arg * arg / 2);
             double result = 1 / Math.Sqrt(2 * Math.PI) *
-                IntegralCalculation.CalculateIntegralByDifferentTrapeze(
+                IntegralCalculation.CalculateIntegralByTrapeze(
                     funcBelowIntegral, z, -100, 0.1);
 
             if (cond == ConditionOfProbability.RandomVariableMoreThanX || cond == ConditionOfProbability.RandomVariableMoreOrEqualX)
@@ -64,7 +64,7 @@ namespace StatLib.ContinuousDistribution
         {
             Func<double, double> funcBelowIntegral = (x) => Math.Exp(-1 * plusZ * plusZ / 2);
             double result = 1 / Math.Sqrt(2 * Math.PI) *
-                IntegralCalculation.CalculateIntegralByDifferentTrapeze(
+                IntegralCalculation.CalculateIntegralByTrapeze(
                     funcBelowIntegral, plusZ, minusZ, 0.1);
 
             return result;
