@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using stats = StatLib.Statistics;
 
 namespace StatLib.ContinuousDistribution
@@ -10,15 +12,16 @@ namespace StatLib.ContinuousDistribution
     {
         private double average;
         private double standDif;
-        
+
         /// <summary>
         /// Конструктор, принимающий на вход выборку данных.
         /// </summary>
-        /// <param name="data">Массив, содержащий выборку данных.</param>
-        public Normal(double[] data)
+        /// <param name="data">Коллекция, содержащая выборку.</param>
+        /// <param name="n">Размер выборки.</param>
+        public Normal(IEnumerable<double> data, int n)
         {
             average = stats.GetAverage(data);
-            standDif = stats.GetDispersion(data, average);
+            standDif = stats.GetDispersion(data, n, average);
         }
 
         /// <summary>
@@ -38,7 +41,7 @@ namespace StatLib.ContinuousDistribution
         /// <param name="x">Значение.</param>
         /// <param name="cond">Условие.</param>
         /// <returns>Вероятность.</returns>
-        public double GetValue(double x, ConditionOfProbability cond)
+        public double GetProbabilityWithCondition(double x, ConditionOfProbability cond)
         {
             double z = (x - average) / standDif;
             Func<double, double> funcBelowIntegral = (arg) => Math.Exp(-1 * arg * arg / 2);
@@ -55,12 +58,27 @@ namespace StatLib.ContinuousDistribution
         }
 
         /// <summary>
+        /// Вычисляет значение плотности стандартного нормального закона распределения ( ф(х, 0, 1) ).
+        /// </summary>
+        /// <param name="x">Значение.</param>
+        /// <returns>Плотность.</returns>
+        public static double GetDensityOfStandartNormalDistribution(double x)
+        {
+            return 1 / 2.5066282746310002 * Math.Exp(-1 * x * x / 2);
+        }
+
+        public double GetDensity(double x)
+        {
+            return 1 / (2.5066282746310002 * standDif) * Math.Exp(-1 * (x - average) * (x - average) / (2 * standDif * standDif));
+        }
+
+        /// <summary>
         /// Вычисляет вероятность принадлежности случайной величины некоторому отрезку (minusZ, plusZ).
         /// </summary>
         /// <param name="plusZ">Правая граница отрезка.</param>
         /// <param name="minusZ">Левая граница отрезка.</param>
         /// <returns></returns>
-        public double GetValueBetweenValues(double minusZ, double plusZ)
+        public double GetProbabilityBetweenValues(double minusZ, double plusZ)
         {
             Func<double, double> funcBelowIntegral = (x) => Math.Exp(-1 * plusZ * plusZ / 2);
             double result = 1 / Math.Sqrt(2 * Math.PI) *

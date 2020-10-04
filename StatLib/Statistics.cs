@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using StatLib.DiscretDistribution;
+using StatLib.ContinuousDistribution;
 
 namespace StatLib
 {
@@ -13,11 +14,11 @@ namespace StatLib
     public static class Statistics
     {
         /// <summary>
-        /// Вычисляет среднее арифметическое(мат.ожидание).
+        /// Вычисляет среднее арифметическое.
         /// </summary>
         /// <param name="data">Массив данных.</param>
         /// <returns>Среднее арифметическое.</returns>
-        public static double GetAverage(double[] data)
+        public static double GetAverage(IEnumerable<double> data)
         {
             return data.Average();
         }
@@ -26,33 +27,72 @@ namespace StatLib
         /// Вычисляет среднеквадратическое отклонение.
         /// </summary>
         /// <param name="data">Массив данных.</param>
+        ///  <param name="n">Массив данных.</param>
         /// <param name="average">Среднее арифметическое из этих данных.</param>
         /// <returns>Средне-квадратическое отклонение.</returns>
-        public static double GetDispersion(double[] data, double average)
+        public static double GetDispersion(IEnumerable<double> data, int n, double average)
         { 
             return Math.Sqrt(
-                data.Sum((x) => (x - average) * (x - average)) / (data.Length - 1)
+                data.Sum((x) => (x - average) * (x - average)) / (n - 1)
                 );
         }
 
         /// <summary>
-        /// Вычисляет хи-квадрат (критерий Пирсона).
+        /// Вычисляет выборочное среднее значение.
+        /// </summary>
+        /// <param name="xi">Середины РАВНООТСТОЯЩИХ интервалов.</param>
+        /// <param name="ni">Частоты РАВНООТСТАЯЩИХ интервалов.</param>
+        /// <param name="n">Количество опытов.</param>
+        /// <returns>Выборочное значение.</returns>
+        public static double GetSampleAverage(IEnumerable<double> xi, IEnumerable<int> ni, int n)
+        {
+            return xi.Zip(ni, (x, y) => (x, y))
+                .Sum((x) => (x.Item1 * x.Item2)) / n;
+        }
+
+        /// <summary>
+        /// Вычисляет выборочное среднее квардратическое отклонение.
+        /// </summary>
+        /// <param name="xi">Середины РАВНООТСТОЯЩИХ интервалов.</param>
+        /// <param name="ni">Частоты РАВНООТСТОЯЩИХ интервалов.</param>
+        /// <param name="sampleAverage">Выборочное среднее значение.</param>
+        /// <param name="n">Количество опытов.</param>
+        /// <returns>Выборочное среднее квадратическое отклонение.</returns>
+        public static double GetSampleDifference(IEnumerable<double> xi, IEnumerable<int> ni, double sampleAverage, int n)
+        {
+            return Math.Sqrt(xi.Zip(ni, (x, y) => (x, y)).Sum(
+                (x) => x.Item2 * (x.Item1 - sampleAverage) * (x.Item1 - sampleAverage)) / n);
+        }
+
+        /// <summary>
+        /// Вычисляет хи-квадрат (критерий Пирсона) для нормального распределения.
+        /// </summary>
+        /// <param name="averagesOfIntervals">Середина РАВНООТСТОЯЩИХ интервалов.</param>
+        /// <param name="frequencies">Частоты РАВНООСТОЯЩИХ инетрвалов.</param>
+        /// <param name="n"></param>
+        /// <param name="h"></param>
+        /// <returns>Критерий Пирсона.</returns>
+        public static double GetPearsonsNumberForNormalDistribution(IEnumerable<double> averagesOfIntervals, IEnumerable<int> frequencies, int n, double h)
+        {
+            double sampleAverage = GetSampleAverage(averagesOfIntervals, frequencies, n);
+            double sampleDifference = GetSampleDifference(averagesOfIntervals, frequencies, sampleAverage, n);
+            IEnumerable<double> ui = from averageOfInterval in averagesOfIntervals select (averageOfInterval - sampleAverage) / sampleDifference;
+            IEnumerable<double> theorFrequencies = from value in ui select n * h / sampleDifference * Normal.GetDensityOfStandartNormalDistribution(value);
+            return GetPearsonNumber(frequencies, theorFrequencies);
+        }
+
+        /// <summary>
+        /// Вычисляет хи-квадрат (критерий Пирсона) для биномиального распределения.
         /// </summary>
         /// <param name="frequencies">Массив частот успехов при соответствующем количестве успехов.</param>
         /// <param name="N">Количество испытаний(не путать с опытами).</param>
         /// <param name="probability">Вероятность появления события.</param>
+        /// <param name="n">Количество опытов.</param>
         /// <returns>Критерий Пирсона.</returns>
-        public static double GetPearsonsNumberForDiscretDistribution(int[] frequencies, int N, double probability)
+        public static double GetPearsonsNumberForBinomialDistribution(int[] xi, int[] frequencies, int n, int N, double probability)
         {
-            int[] temp = new int[frequencies.Length];
-            for (int i = 0; i < temp.Length; i++)
-            {
-                temp[i] = i;
-            }
-
             Binomial binom = new Binomial(N, probability);
-            double[] probabilitiesByCountOfProvings = (from val in temp select binom.GetValue(val)).ToArray();
-            int n = frequencies.Sum();
+            double[] probabilitiesByCountOfProvings = (from val in xi select binom.GetValue(val)).ToArray();
             double[] theorFrequencies = (from val in probabilitiesByCountOfProvings select n * val).ToArray();
 
             List<int> newFreqs = new List<int>();
@@ -76,7 +116,12 @@ namespace StatLib
             frequencies = newFreqs.ToArray();
             theorFrequencies = newTheorFreqs.ToArray();
 
-            return (frequencies.Zip<int, double, (double, double)>(theorFrequencies, (x, y) => ((double)x, y)))
+            return GetPearsonNumber(frequencies, theorFrequencies);
+        }
+
+        public static double GetPearsonNumber(IEnumerable<int> frequencies, IEnumerable<double> theorFrequencies)
+        {
+            return frequencies.Zip(theorFrequencies, (x, y) => ((double)x, y))
                 .Sum((x) => (x.Item1 - x.Item2) * (x.Item1 - x.Item2) / x.Item2);
         }
     }
