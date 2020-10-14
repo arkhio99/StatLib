@@ -21,7 +21,7 @@ namespace StatLib.ContinuousDistribution
         public Normal(IEnumerable<double> data, int n)
         {
             average = stats.GetAverage(data);
-            standDif = stats.GetDispersion(data, n, average);
+            standDif = Math.Sqrt(stats.GetDispersion(data, n, average));
         }
 
         /// <summary>
@@ -58,6 +58,21 @@ namespace StatLib.ContinuousDistribution
         }
 
         /// <summary>
+        /// Вычисляет функцию Лапласа.
+        /// </summary>
+        /// <param name="z">Значение.</param>
+        /// <returns>Значение функции Лапласа.</returns>
+        public double LaplasFunction(double z)
+        {
+            Func<double, double> funcBelowIntegral = (arg) => Math.Exp(-1 * arg * arg / 2);
+            double result = 1 / Math.Sqrt(2 * Math.PI) *
+                IntegralCalculation.CalculateIntegralByTrapeze(
+                    funcBelowIntegral, z, -100, 0.1);
+
+            return result;
+        }
+
+        /// <summary>
         /// Вычисляет значение плотности стандартного нормального закона распределения ( ф(х, 0, 1) ).
         /// </summary>
         /// <param name="x">Значение.</param>
@@ -73,19 +88,15 @@ namespace StatLib.ContinuousDistribution
         }
 
         /// <summary>
-        /// Вычисляет вероятность принадлежности случайной величины некоторому отрезку (minusZ, plusZ).
+        /// Вычисляет вероятность принадлежности случайной величины некоторому отрезку (minusX, plusX).
         /// </summary>
-        /// <param name="plusZ">Правая граница отрезка.</param>
-        /// <param name="minusZ">Левая граница отрезка.</param>
-        /// <returns></returns>
-        public double GetProbabilityBetweenValues(double minusZ, double plusZ)
+        /// <param name="plusX">Правая граница отрезка.</param>
+        /// <param name="minusX">Левая граница отрезка.</param>
+        /// <returns>Вероятность принадлежности слуйчаной величины некоторому отрезку.</returns>
+        public double GetProbabilityBetweenValues(double minusX, double plusX)
         {
-            Func<double, double> funcBelowIntegral = (x) => Math.Exp(-1 * plusZ * plusZ / 2);
-            double result = 1 / Math.Sqrt(2 * Math.PI) *
-                IntegralCalculation.CalculateIntegralByTrapeze(
-                    funcBelowIntegral, plusZ, minusZ, 0.1);
-
-            return result;
+            double sqrtOfDisp = Math.Sqrt(standDif);
+            return GetProbabilityWithCondition(plusX, ConditionOfProbability.RandomVariableLessThanX) - GetProbabilityWithCondition(minusX, ConditionOfProbability.RandomVariableLessThanX);
         }
     }
 

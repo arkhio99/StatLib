@@ -32,9 +32,7 @@ namespace StatLib
         /// <returns>Средне-квадратическое отклонение.</returns>
         public static double GetDispersion(IEnumerable<double> data, int n, double average)
         { 
-            return Math.Sqrt(
-                data.Sum((x) => (x - average) * (x - average)) / (n - 1)
-                );
+            return data.Sum((x) => (x - average) * (x - average)) / (n - 1);
         }
 
         /// <summary>
@@ -69,8 +67,8 @@ namespace StatLib
         /// </summary>
         /// <param name="averagesOfIntervals">Середина РАВНООТСТОЯЩИХ интервалов.</param>
         /// <param name="frequencies">Частоты РАВНООСТОЯЩИХ инетрвалов.</param>
-        /// <param name="n"></param>
-        /// <param name="h"></param>
+        /// <param name="n">Объём выборки.</param>
+        /// <param name="h">Длина интервала.</param>
         /// <returns>Критерий Пирсона.</returns>
         public static double GetPearsonsNumberForNormalDistribution(IEnumerable<double> averagesOfIntervals, IEnumerable<int> frequencies, int n, double h)
         {
