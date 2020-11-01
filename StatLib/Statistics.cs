@@ -86,8 +86,9 @@ namespace StatLib
         /// <param name="N">Количество испытаний(не путать с опытами).</param>
         /// <param name="probability">Вероятность появления события.</param>
         /// <param name="n">Количество опытов.</param>
+        /// <param name="k">"Количество степеней свободы."</param>
         /// <returns>Критерий Пирсона.</returns>
-        public static double GetPearsonsNumberForBinomialDistribution(int[] xi, int[] frequencies, int n, int N, double probability)
+        public static double GetPearsonsNumberForBinomialDistribution(int[] xi, int[] frequencies, int n, int N, double probability, out int k)
         {
             Binomial binom = new Binomial(N, probability);
             double[] probabilitiesByCountOfProvings = (from val in xi select binom.GetValue(val)).ToArray();
@@ -110,9 +111,10 @@ namespace StatLib
                     tempTheorFreq = 0;
                 }
             }
-
+            
             frequencies = newFreqs.ToArray();
             theorFrequencies = newTheorFreqs.ToArray();
+            k = frequencies.Length - 1;
 
             return GetPearsonNumber(frequencies, theorFrequencies);
         }

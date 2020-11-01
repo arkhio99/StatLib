@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatLib", "StatLib\StatLib.csproj", "{5ACF26FC-B06B-47DD-8063-88EBCDB4D9E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatLibTests", "StatLibTest\StatLibTests.csproj", "{4CBD1D3A-4988-4FB1-A75E-AEC916EE7865}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StatLibTests", "StatLibTest\StatLibTests.csproj", "{4CBD1D3A-4988-4FB1-A75E-AEC916EE7865}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KM1", "KM1\KM1.csproj", "{359B249B-79E8-4E63-A20F-012DE98FD160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4CBD1D3A-4988-4FB1-A75E-AEC916EE7865}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CBD1D3A-4988-4FB1-A75E-AEC916EE7865}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{4CBD1D3A-4988-4FB1-A75E-AEC916EE7865}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{359B249B-79E8-4E63-A20F-012DE98FD160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{359B249B-79E8-4E63-A20F-012DE98FD160}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{359B249B-79E8-4E63-A20F-012DE98FD160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{359B249B-79E8-4E63-A20F-012DE98FD160}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

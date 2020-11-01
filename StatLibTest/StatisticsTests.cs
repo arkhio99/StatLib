@@ -17,7 +17,7 @@ namespace StatLibTests
             int[] frequencies = new int[] { 2, 10, 27, 32, 23, 6 };
             int N = 10;
             double probability = 0.3;
-            double hiSquare = Statistics.GetPearsonsNumberForBinomialDistribution(xi, frequencies, frequencies.Sum(), N, probability);
+            double hiSquare = Statistics.GetPearsonsNumberForBinomialDistribution(xi, frequencies, frequencies.Sum(), N, probability, out int k);
             Assert.AreEqual(4.4398, hiSquare, 0.01);
         }
 
