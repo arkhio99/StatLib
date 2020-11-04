@@ -30,9 +30,9 @@ namespace KM1
             Console.WriteLine($"Количество степеней свободы - {k}");
             Console.WriteLine("\n\n\n\n");
 
-            double average = 0;
-            double standDif = 5;
-            int n1 = 100;
+            double average = 4;
+            double standDif = 10;
+            int n1 = 1000;
             Console.WriteLine($"Среднее - {average:f3}");
             Console.WriteLine($"Стандартное отклонение - {standDif:f3}");
             Console.WriteLine($"Количество опытов - {n1}");
