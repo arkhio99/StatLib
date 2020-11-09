@@ -14,18 +14,9 @@ namespace StatLib.Generators
         public static void Normal(double average, double standartDifference, int n, out double[] averageOfIntervals, out int[] frequencies, out double h)
         {
             double[] ar = new double[n];
-            for (int i = 0; i < n; i += 2)
+            for (int i = 0; i < n; i ++)
             {
-                double a = average;
-                double s = standartDifference;
-                double maxProb = 1 / (s * Math.Sqrt(2 * Math.PI));
-                double u = rand.NextDouble() % maxProb;
-                double log = Math.Log(u * s * Math.Sqrt(2 * Math.PI));
-                double sqrt = Math.Sqrt(-2 * s * s * log);
-                //Console.WriteLine($"u = {u:f4}, x = {a + sqrt:f4}, res_prob = {Norm(a + sqrt, a, s):f4}");
-                //Console.WriteLine($"u = {u:f4}, x = {a - sqrt:f4}, res_prob = {Norm(a - sqrt, a, s):f4}");
-                ar[i] = a + sqrt;
-                ar[i + 1] = a - sqrt;
+                ar[i] = Generate(average, standartDifference);
             }
 
             IEnumerable<double> ar1 = ar.OrderBy(val => val);
@@ -65,16 +56,12 @@ namespace StatLib.Generators
             }
         }
 
-        private static double Generate(double average, double standartDifference, bool sign)
+        private static double Generate(double average, double standartDifference)
         {
             double a = average;
             double s = standartDifference;
-            double max = 1 / (s * Math.Sqrt(2 * Math.PI));
-            double u = rand.NextDouble() % max;
-            double log = Math.Log(u * s * Math.Sqrt(2 * Math.PI));
-            double sqrt = Math.Sqrt(-2 * s * s * log);
-            double res = a + (sign ? 1 : -1) * sqrt;
-            Console.WriteLine($"u = {u:f4}, x = {a + sqrt:f4}, res_prob = {Norm(res, a, s):f4}");
+            double u = rand.NextDouble();
+            double res = a - s * Math.Log(u);
             return res;
         }
 
