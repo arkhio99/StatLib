@@ -61,7 +61,7 @@ namespace StatLib.Generators
             double a = average;
             double s = standartDifference;
             double u = rand.NextDouble();
-            double res = a - s * Math.Log(u);
+            double res = a + s * (Math.Sqrt(-2 * Math.Log(u)) + 1);
             return res;
         }
 

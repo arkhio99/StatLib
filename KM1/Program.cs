@@ -32,7 +32,7 @@ namespace KM1
 
             double average = 4;
             double standDif = 10;
-            int n1 = 1000;
+            int n1 = 100;
             Console.WriteLine($"Среднее - {average:f3}");
             Console.WriteLine($"Стандартное отклонение - {standDif:f3}");
             Console.WriteLine($"Количество опытов - {n1}");
